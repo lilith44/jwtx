@@ -1,5 +1,7 @@
 package jwtx
 
+import "time"
+
 // Config is a config of jwt.
 type Config struct {
 	// signing method
@@ -7,5 +9,5 @@ type Config struct {
 	Key    string `yaml:"key" validate:"required"`
 	Scheme string `yaml:"scheme"`
 	// minute
-	Expiration int `default:"720" yaml:"expiration" validate:"required"`
+	Expiration time.Duration `default:"720" yaml:"expiration" validate:"required"`
 }

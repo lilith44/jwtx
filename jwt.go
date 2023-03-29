@@ -14,7 +14,7 @@ type JWT struct {
 	method     string
 	key        []byte
 	scheme     string
-	expiration int
+	expiration time.Duration
 	keyFunc    jwt.Keyfunc
 }
 
@@ -45,7 +45,7 @@ func New(config Config, extra ...extraValidateFunc) *JWT {
 				}
 			}
 
-			return config.Key, nil
+			return []byte(config.Key), nil
 		},
 	}
 }
@@ -74,7 +74,7 @@ func (j *JWT) Sign(payload any) (string, error) {
 	}
 
 	if j.scheme != "" {
-		tokenString = j.scheme + " " + tokenString
+		tokenString = j.scheme + tokenString
 	}
 
 	return tokenString, nil
@@ -82,8 +82,8 @@ func (j *JWT) Sign(payload any) (string, error) {
 
 // Payload extracts from the tokenString and unmarshals into payload.
 func (j *JWT) Payload(tokenString string, payload any) error {
-	if j.scheme != "" && strings.HasPrefix(tokenString, j.scheme) {
-		tokenString = tokenString[len(j.scheme)+1:]
+	if j.scheme != "" {
+		tokenString = strings.TrimPrefix(tokenString, j.scheme)
 	}
 
 	standard := new(jwt.StandardClaims)
